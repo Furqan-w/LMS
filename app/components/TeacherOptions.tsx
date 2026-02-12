@@ -14,22 +14,27 @@ export default function TeacherOptions() {
         Create Course
       </button>
 
-       <button
+      <button
         onClick={() => router.push("/dashboard/show-courses")}
         className="bg-indigo-600 text-white px-4 py-2 rounded"
       >
         Show Courses
       </button>
 
-       <button
-        onClick={() =>
-          router.push("/dashboard/registered-students-course")
-        }
+      <button
+        onClick={() => router.push("/dashboard/registered-students-course")}
         className="bg-emerald-600 text-white px-4 py-2 rounded"
       >
         Show Registered Students
       </button>
-    
+
+      {/* ✅ NEW BUTTON */}
+      <button
+        onClick={() => router.push("/dashboard/add-manually-student")}
+        className="bg-orange-600 text-white px-4 py-2 rounded"
+      >
+        Add Student Manually
+      </button>
     </div>
   );
 }
