@@ -5,32 +5,10 @@ import { observer } from "mobx-react-lite";
 import { authStore } from "@/stores/AuthStore";
 import { useRouter } from "next/navigation";
 import TeacherOptions from "../components/TeacherOptions";
+import StudentOptions from "../components/StudentOptions";
 
 const DashboardPage = observer(() => {
-  // const router = useRouter();
-  // const [isEditing, setIsEditing] = useState(false);
-  // const [newName, setNewName] = useState("");
-  // const [mounted, setMounted] = useState(false);
-
-  // useEffect(() => {
-  //   setMounted(true);
-
-  //   if (!authStore.user) {
-  //     const storedUser = sessionStorage.getItem("user");
-  //     if (storedUser) {
-  //       const parsed = JSON.parse(storedUser);
-  //       authStore.setUser(parsed);
-  //       setNewName(parsed.name);
-  //     } else {
-  //       router.push("/login");
-  //     }
-  //   } else {
-  //     setNewName(authStore.user.name);
-  //   }
-  // }, [router]);
-
-  // if (!mounted || !authStore.user) return null;
- const router = useRouter();
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState("");
   const [isMounted, setIsMounted] = useState(false);
@@ -126,12 +104,16 @@ const DashboardPage = observer(() => {
                 <TeacherOptions />
               </div>
             )}
+
+            {authStore.user.role === "student" && (
+              <div className="mt-6 border-t pt-6">
+                <StudentOptions />
+              </div>
+            )}
           </>
         ) : (
           <>
-            <h2 className="text-xl font-semibold mb-4">
-              Edit Name
-            </h2>
+            <h2 className="text-xl font-semibold mb-4">Edit Name</h2>
 
             <input
               type="text"
