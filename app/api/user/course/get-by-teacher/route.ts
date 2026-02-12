@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import {connectDB} from "@/lib/mongodb";
 import Course from "@/models/Course";
 
-export async function POST(req: Request) {
+export async function GET(req: NextRequest) {
   try {
     await connectDB();
 
-    const { teacherId } = await req.json();
+    const teacherId = req.nextUrl.searchParams.get("teacherId");
 
     if (!teacherId) {
       return NextResponse.json(

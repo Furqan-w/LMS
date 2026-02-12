@@ -16,14 +16,11 @@ export default function TeacherCourses() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await fetch("/api/user/course/get-by-teacher", {
-          method: "POST",
+        const res = await fetch(`/api/user/course/get-by-teacher?teacherId=${authStore.user?.uniqueId}`, {
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            teacherId: authStore.user?.uniqueId,
-          }),
         });
 
         const data = await res.json();
