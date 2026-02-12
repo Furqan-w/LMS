@@ -4,6 +4,7 @@ import { observer } from "mobx-react-lite";
 import { courseStore } from "@/stores/CourseStore";
   import { authStore } from "@/stores/AuthStore";
   import MyRegisteredCourses from "../components/MyRegisteredCourses";
+  import { enrollmentStore } from "@/stores/EnrollmentStore";
 
 
 
@@ -34,6 +35,11 @@ const handleRegister = async (course: any) => {
     if (!res.ok) {
       alert(data.message);
       return;
+    }
+
+    // Refresh student's registered courses so UI updates immediately
+    if (authStore.user?.uniqueId) {
+      enrollmentStore.fetchRegistered(authStore.user.uniqueId);
     }
 
     alert("Registered successfully!");

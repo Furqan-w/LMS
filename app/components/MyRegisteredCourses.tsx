@@ -1,41 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect } from "react";
+import { observer } from "mobx-react-lite";
 import { authStore } from "@/stores/AuthStore";
+import { enrollmentStore } from "@/stores/EnrollmentStore";
 
-export default function MyRegisteredCourses() {
-  const [courses, setCourses] = useState([]);
-
-  const fetchRegistered = async () => {
-    const res = await fetch(
-      `/api/user/course/get-registered?studentId=${authStore.user?.uniqueId}`
-    );
-
-    const data = await res.json();
-
-    if (res.ok) {
-      setCourses(data.enrollments);
+const MyRegisteredCourses = observer(() => {
+  useEffect(() => {
+    if (authStore.user?.uniqueId) {
+      enrollmentStore.fetchRegistered(authStore.user.uniqueId);
     }
-  };
+  }, [authStore.user?.uniqueId]);
 
   return (
     <div className="mt-6">
       <button
-        onClick={fetchRegistered}
+        onClick={() => enrollmentStore.fetchRegistered(authStore.user?.uniqueId)}
         className="bg-purple-600 text-white px-4 py-2 rounded"
       >
         Show My Registered Courses
       </button>
 
-      {courses.map((course: any) => (
-        <div
-          key={course._id}
-          className="border p-3 mt-3 rounded"
-        >
+      {enrollmentStore.enrollments.map((course: any) => (
+        <div key={course._id ?? course.courseId} className="border p-3 mt-3 rounded">
           <h3>{course.courseName}</h3>
           <p>Teacher: {course.teacherName}</p>
         </div>
       ))}
     </div>
   );
-}
+});
+
+export default MyRegisteredCourses;
