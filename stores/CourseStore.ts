@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 
 export interface Course {
   _id: string;
@@ -19,23 +19,28 @@ class CourseStore {
   async fetchAllCourses() {
     // 🔥 Prevent repeated API calls
     if (this.hasFetched) return;
-
-    this.loading = true;
+    runInAction(() => {
+      this.loading = true;
+    });
 
     try {
       const res = await fetch("/api/user/course/get-all");
       const data = await res.json();
 
       if (res.ok) {
-        this.courses = data.courses;
-        this.hasFetched = true;
+        runInAction(() => {
+          this.courses = data.courses;
+          this.hasFetched = true;
+        });
       } else {
         alert(data.message);
       }
     } catch (error) {
       alert("Error fetching courses");
     } finally {
-      this.loading = false;
+      runInAction(() => {
+        this.loading = false;
+      });
     }
   }
 }

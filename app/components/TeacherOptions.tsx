@@ -20,6 +20,16 @@ export default function TeacherOptions() {
       >
         Show Courses
       </button>
+
+       <button
+        onClick={() =>
+          router.push("/dashboard/registered-students-course")
+        }
+        className="bg-emerald-600 text-white px-4 py-2 rounded"
+      >
+        Show Registered Students
+      </button>
+    
     </div>
   );
 }
