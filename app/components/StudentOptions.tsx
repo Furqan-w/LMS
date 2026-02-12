@@ -1,74 +1,90 @@
 "use client";
 
-import { useState } from "react";
+import { observer } from "mobx-react-lite";
+import { courseStore } from "@/stores/CourseStore";
+  import { authStore } from "@/stores/AuthStore";
+  import MyRegisteredCourses from "../components/MyRegisteredCourses";
 
-interface Course {
-  _id: string;
-  courseName: string;
-  roomNumber: string;
-  teacherName: string;
-}
 
-export default function StudentOptions() {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [hasFetched, setHasFetched] = useState(false);
 
-  const fetchCourses = async () => {
-    setLoading(true);
-
-    try {
-      const res = await fetch("/api/user/course/get-all");
-      const data = await res.json();
-
-      if (res.ok) {
-        setCourses(data.courses);
-        setHasFetched(true);
-      } else {
-        alert(data.message);
-      }
-    } catch (error) {
-      alert("Error fetching courses");
-    } finally {
-      setLoading(false);
-    }
+const StudentOptions = observer(() => {
+  const handleFetch = () => {
+    courseStore.fetchAllCourses();
   };
 
+
+const handleRegister = async (course: any) => {
+  try {
+    const res = await fetch("/api/user/course/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        studentId: authStore.user?.uniqueId,
+        studentName: authStore.user?.name,
+        teacherName: course.teacherName,
+        courseName: course.courseName,
+        courseId: course._id,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message);
+      return;
+    }
+
+    alert("Registered successfully!");
+  } catch (error) {
+    alert("Error registering course");
+  }
+};
+
+
   return (
-    <div className="mt-3  pt-3 ">
+    <div className="mt-3 pt-3">
       <button
-        onClick={fetchCourses}
-        className="bg-emerald-600 text-white px-4 py-2 rounded"
+        onClick={handleFetch}
+        disabled={courseStore.loading}
+        className="bg-emerald-600 text-white px-4 py-2 rounded disabled:opacity-50"
       >
-        Show All Available Courses
+        {courseStore.hasFetched
+          ? "Courses Loaded"
+          : "Show All Available Courses"}
       </button>
 
-      {loading && (
-        <p className="mt-4">Loading courses...</p>
-      )}
+      {courseStore.loading && <p className="mt-4">Loading courses...</p>}
 
-      {hasFetched && !loading && courses.length === 0 && (
-        <p className="mt-4">No courses available.</p>
-      )}
+      {courseStore.hasFetched &&
+        !courseStore.loading &&
+        courseStore.courses.length === 0 && (
+          <p className="mt-4">No courses available.</p>
+        )}
+        <MyRegisteredCourses />
 
-      {courses.length > 0 && (
+      {courseStore.courses.length > 0 && (
         <div className="mt-6 space-y-3">
-          {courses.map((course) => (
-            <div
-              key={course._id}
-              className="border p-3 rounded shadow-sm"
-            >
-              <h3 className="font-semibold">
-                {course.courseName}
-              </h3>
+          {courseStore.courses.map((course) => (
+            <div key={course._id} className="border p-3 rounded shadow-sm">
+              <h3 className="font-semibold">{course.courseName}</h3>
               <p>Room: {course.roomNumber}</p>
               <p className="text-sm text-gray-500">
                 Teacher: {course.teacherName}
               </p>
+              <button
+                onClick={() => handleRegister(course)}
+                className="mt-2 bg-blue-600 text-white px-3 py-1 rounded"
+              >
+                Register Course
+              </button>
             </div>
           ))}
         </div>
       )}
     </div>
   );
-}
+});
+
+export default StudentOptions;
