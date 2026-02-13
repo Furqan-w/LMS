@@ -6,6 +6,7 @@ import { authStore } from "@/stores/AuthStore";
 import { useRouter } from "next/navigation";
 import TeacherOptions from "../components/TeacherOptions";
 import StudentOptions from "../components/StudentOptions";
+import AdminOptions from "../components/AdminOptions";
 
 const DashboardPage = observer(() => {
   const router = useRouter();
@@ -108,6 +109,13 @@ const DashboardPage = observer(() => {
             {authStore.user.role === "student" && (
               <div className="mt-6 border-t pt-6">
                 <StudentOptions />
+              </div>
+            )}
+
+            {/* ✅ Show Admin Options Only For Admin */}
+            {authStore.user.role === "admin" && (
+              <div className="mt-6 border-t pt-6">
+                <AdminOptions />
               </div>
             )}
           </>
